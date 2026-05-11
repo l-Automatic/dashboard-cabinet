@@ -7,227 +7,123 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --green: #1D9E75;
-      --green-light: #e8f7f2;
-      --green-dark: #157a5a;
-      --bg: #f5f6f8;
-      --surface: #ffffff;
-      --border: #e2e6ea;
-      --text: #1a1f2e;
-      --text-muted: #6b7280;
-      --sidebar-width: 220px;
-      --header-height: 60px;
-      --radius: 10px;
-      --shadow: 0 1px 4px rgba(0,0,0,0.07);
+      --green: #1D9E75; --green-light: #EBF7F3; --green-dark: #157a5a;
+      --orange: #f59e0b; --orange-light: #FEF3E2;
+      --red: #E24B4A; --red-light: #FEECEC;
+      --bg: #F8F9FA; --surface: #ffffff; --border: #EBEBEB;
+      --text: #1a1f2e; --text-muted: #6b7280;
+      --sidebar-width: 220px; --header-height: 60px;
+      --radius: 12px; --shadow: 0 2px 8px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.03);
     }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-
-    /* ── Header ── */
-    header {
-      height: var(--header-height);
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      padding: 0 24px;
-      gap: 12px;
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
+    @keyframes viewFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-
-    .logo-mark {
-      width: 32px; height: 32px;
-      background: var(--green);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-    }
-
+    .view.active { animation: viewFadeIn 0.2s ease both; }
+    .anim-card { opacity: 0; }
+    .anim-card.visible { animation: fadeInUp 0.3s ease both; }
+    .anim-card:nth-child(1).visible { animation-delay: 0s; }
+    .anim-card:nth-child(2).visible { animation-delay: 0.05s; }
+    .anim-card:nth-child(3).visible { animation-delay: 0.10s; }
+    .anim-card:nth-child(4).visible { animation-delay: 0.15s; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+    header { height: var(--header-height); background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 24px; gap: 12px; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+    .logo-mark { width: 32px; height: 32px; background: var(--green); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
     .logo-mark svg { width: 18px; height: 18px; fill: white; }
-
-    .logo-text {
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: -0.2px;
-      color: var(--text);
-    }
-
-    .logo-text span {
-      color: var(--green);
-    }
-
-    .header-right {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .badge-demo {
-      font-size: 11px;
-      font-weight: 500;
-      background: var(--green-light);
-      color: var(--green-dark);
-      padding: 3px 10px;
-      border-radius: 20px;
-      border: 1px solid rgba(29,158,117,0.2);
-    }
-
-    .avatar {
-      width: 32px; height: 32px;
-      background: var(--green);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px;
-      font-weight: 600;
-      color: white;
-    }
-
-    /* ── Layout ── */
-    .layout {
-      display: flex;
-      margin-top: var(--header-height);
-      min-height: calc(100vh - var(--header-height));
-    }
-
-    /* ── Sidebar ── */
-    aside {
-      width: var(--sidebar-width);
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      position: fixed;
-      top: var(--header-height);
-      left: 0;
-      bottom: 0;
-      padding: 20px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .nav-section-label {
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--text-muted);
-      padding: 8px 10px 4px;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 12px;
-      border-radius: var(--radius);
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-muted);
-      transition: background 0.15s, color 0.15s;
-      user-select: none;
-      border: none;
-      background: none;
-      width: 100%;
-      text-align: left;
-    }
-
-    .nav-item:hover {
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    .nav-item.active {
-      background: var(--green-light);
-      color: var(--green-dark);
-      font-weight: 600;
-    }
-
+    .logo-text { font-size: 15px; font-weight: 600; letter-spacing: -0.2px; color: var(--text); }
+    .logo-text span { color: var(--green); }
+    .header-right { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+    .badge-demo { font-size: 11px; font-weight: 500; background: var(--green-light); color: var(--green-dark); padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(29,158,117,0.2); }
+    .avatar { width: 32px; height: 32px; background: var(--green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: white; }
+    .layout { display: flex; margin-top: var(--header-height); min-height: calc(100vh - var(--header-height)); }
+    aside { width: var(--sidebar-width); background: var(--surface); border-right: 1px solid var(--border); position: fixed; top: var(--header-height); left: 0; bottom: 0; padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-section-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); padding: 8px 10px 4px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius); cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text-muted); transition: background 0.15s, color 0.15s; user-select: none; border: none; background: none; width: 100%; text-align: left; }
+    .nav-item:hover { background: var(--bg); color: var(--text); }
+    .nav-item.active { background: var(--green-light); color: var(--green-dark); font-weight: 600; border-left: 3px solid var(--green); padding-left: 9px; }
     .nav-item.active .nav-icon { color: var(--green); }
-
-    .nav-icon {
-      width: 18px; height: 18px;
-      flex-shrink: 0;
-    }
-
-    /* ── Main content ── */
-    main {
-      margin-left: var(--sidebar-width);
-      flex: 1;
-      padding: 32px 32px;
-      max-width: 100%;
-    }
-
-    /* ── Views ── */
+    .nav-icon { width: 18px; height: 18px; flex-shrink: 0; }
+    main { margin-left: var(--sidebar-width); flex: 1; padding: 32px; max-width: 100%; }
     .view { display: none; }
     .view.active { display: block; }
 
-    .page-header {
-      margin-bottom: 28px;
-    }
+    /* Dossier view */
+    .dossier-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; gap: 16px; }
+    .dossier-top h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+    .dossier-secteur { font-size: 13px; color: var(--text-muted); margin-top: 3px; display: block; }
+    .dossier-select { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); font-size: 14px; color: var(--text); cursor: pointer; min-width: 230px; outline: none; }
+    .dossier-select:focus { border-color: var(--green); }
 
-    .page-header h1 {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -0.4px;
-      color: var(--text);
-    }
+    /* Shared components */
+    .section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--green); margin: 28px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .kpi-grid { display: grid; gap: 14px; margin-bottom: 14px; }
+    .kpi-grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .kpi-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .kpi-grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .kpi-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 18px 20px; box-shadow: var(--shadow); transition: box-shadow 0.18s, transform 0.18s; }
+    .kpi-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.09), 0 0 0 1px rgba(0,0,0,0.04); transform: translateY(-1px); }
+    .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 8px; }
+    .kpi-value { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); line-height: 1.2; }
+    .kpi-sub { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
+    .color-green { color: var(--green) !important; }
+    .color-orange { color: var(--orange) !important; }
+    .color-red { color: var(--red) !important; }
+    .kpi-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; margin-top: 8px; }
+    .badge-green { background: var(--green-light); color: #1D9E75; border: 1px solid rgba(29,158,117,0.25); }
+    .badge-orange { background: var(--orange-light); color: #BA7517; border: 1px solid rgba(245,158,11,0.3); }
+    .badge-red { background: var(--red-light); color: #E24B4A; border: 1px solid rgba(226,75,74,0.3); }
+    .chart-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px 24px; box-shadow: var(--shadow); margin-bottom: 14px; transition: box-shadow 0.18s, transform 0.18s; }
+    .chart-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.09), 0 0 0 1px rgba(0,0,0,0.04); transform: translateY(-1px); }
+    .chart-title { font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .chart-wrap { position: relative; }
+    .chart-wrap-200 { height: 200px; }
+    .chart-wrap-160 { height: 160px; }
+    .chart-wrap-220 { height: 220px; }
 
-    .page-header p {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
+    /* Portefeuille */
+    .page-header { margin-bottom: 24px; }
+    .page-header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+    .page-header p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
 
-    /* ── Placeholder card ── */
-    .placeholder-card {
-      background: var(--surface);
-      border: 1.5px dashed var(--border);
-      border-radius: var(--radius);
-      padding: 60px 40px;
-      text-align: center;
-      color: var(--text-muted);
-    }
+    .filter-bar { display: flex; gap: 20px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 14px; box-shadow: var(--shadow); }
+    .filter-group { display: flex; flex-direction: column; gap: 5px; }
+    .filter-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); }
+    .filter-select { padding: 7px 12px; border-radius: 7px; border: 1px solid var(--border); background: var(--bg); font-size: 13px; color: var(--text); cursor: pointer; outline: none; }
+    .filter-select:focus { border-color: var(--green); }
+    .filter-select-sm { padding: 5px 10px; font-size: 12px; min-width: 190px; }
 
-    .placeholder-card .placeholder-icon {
-      width: 48px; height: 48px;
-      background: var(--green-light);
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 16px;
-    }
+    .chart-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .chart-card-top .chart-title { margin-bottom: 0; }
 
-    .placeholder-card .placeholder-icon svg {
-      width: 24px; height: 24px;
-      stroke: var(--green);
-      fill: none;
-    }
+    .alert-empty { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 16px 20px; color: var(--text-muted); font-size: 14px; display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow); }
+    .alert-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 13px 18px; margin-bottom: 8px; box-shadow: var(--shadow); }
+    .alert-dossier { font-size: 13px; font-weight: 600; color: var(--text); min-width: 200px; }
+    .alert-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .alert-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .alert-badge-red { background: var(--red-light); color: #E24B4A; border: 1px solid rgba(226,75,74,0.3); }
+    .alert-badge-orange { background: var(--orange-light); color: #BA7517; border: 1px solid rgba(245,158,11,0.3); }
 
-    .placeholder-card h2 {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-
-    .placeholder-card p {
-      font-size: 14px;
-    }
+    .table-card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 40px; }
+    .pf-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .pf-table thead tr { background: #FAFAFA; }
+    .pf-table th { padding: 10px 14px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); border-bottom: 1px solid #F5F5F5; white-space: nowrap; }
+    .pf-table td { padding: 11px 14px; border-bottom: 1px solid #F5F5F5; vertical-align: middle; }
+    .pf-table tbody tr:last-child td { border-bottom: none; }
+    .pf-table tbody tr:hover { background: #F4FBF8; }
+    .tag { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 6px; background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+    .statut-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+    .statut-sain { background: var(--green-light); color: #1D9E75; border: 1px solid rgba(29,158,117,0.25); }
+    .statut-attention { background: var(--orange-light); color: #BA7517; border: 1px solid rgba(245,158,11,0.3); }
+    .statut-critique { background: var(--red-light); color: #E24B4A; border: 1px solid rgba(226,75,74,0.3); }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
   <header>
     <div class="logo-mark">
       <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
@@ -240,18 +136,14 @@
   </header>
 
   <div class="layout">
-
-    <!-- Sidebar -->
     <aside>
       <div class="nav-section-label">Navigation</div>
-
       <button class="nav-item active" data-view="dossier">
         <svg class="nav-icon" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2">
           <path d="M3 7a2 2 0 012-2h3l2 2h9a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/>
         </svg>
         Dossier
       </button>
-
       <button class="nav-item" data-view="portefeuille">
         <svg class="nav-icon" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2">
           <rect x="2" y="7" width="20" height="14" rx="2"/>
@@ -261,36 +153,172 @@
       </button>
     </aside>
 
-    <!-- Main -->
     <main>
 
-      <!-- Vue Dossier -->
+      <!-- ══ Vue Dossier ══ -->
       <div class="view active" id="view-dossier">
-        <div class="page-header">
-          <h1>Dossier client</h1>
-          <p>Fiche détaillée d'un client du cabinet</p>
-        </div>
-        <div class="placeholder-card">
-          <div class="placeholder-icon">
-            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M3 7a2 2 0 012-2h3l2 2h9a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg>
+        <div class="dossier-top">
+          <div>
+            <h1 id="dossier-nom">—</h1>
+            <span class="dossier-secteur" id="dossier-secteur">—</span>
           </div>
-          <h2>Vue Dossier</h2>
-          <p>Le contenu de cette vue sera défini à la prochaine étape.</p>
+          <select id="dossier-select" class="dossier-select">
+            <option value="martin-plomberie">SARL Martin Plomberie</option>
+            <option value="dupont-patrimoine">SCI Dupont Patrimoine</option>
+            <option value="le-gaulois">SARL Le Gaulois</option>
+            <option value="dr-renard">Dr. Renard — Médecin</option>
+            <option value="techpulse">EURL TechPulse</option>
+          </select>
+        </div>
+        <div class="section-title">Activité</div>
+        <div class="kpi-grid kpi-grid-4">
+          <div class="kpi-card"><div class="kpi-label">CA cumulé N</div><div class="kpi-value" id="kpi-ca-cumule">—</div><div class="kpi-sub" id="kpi-ca-cumule-sub">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">CA mois en cours</div><div class="kpi-value" id="kpi-ca-mois">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">CA même mois N-1</div><div class="kpi-value" id="kpi-ca-n1">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Variation N / N-1</div><div class="kpi-value" id="kpi-variation">—</div></div>
+        </div>
+        <div class="chart-card"><div class="chart-title">Évolution mensuelle du CA — N vs N-1</div><div class="chart-wrap chart-wrap-200"><canvas id="chart-ca"></canvas></div></div>
+
+        <div class="section-title">Rentabilité &amp; SIG</div>
+        <div class="kpi-grid kpi-grid-3">
+          <div class="kpi-card"><div class="kpi-label">Seuil de rentabilité annuel</div><div class="kpi-value" id="kpi-seuil-annuel">—</div><div id="kpi-seuil-badge" class="kpi-badge">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Seuil de rentabilité mensuel</div><div class="kpi-value" id="kpi-seuil-mensuel">—</div><div class="kpi-sub">Seuil annuel / 12</div></div>
+          <div class="kpi-card"><div class="kpi-label">Taux de profitabilité</div><div class="kpi-value" id="kpi-profitabilite">—</div><div class="kpi-sub">Résultat net / CA estimé</div></div>
+        </div>
+        <div class="chart-card"><div class="chart-title">Soldes Intermédiaires de Gestion</div><div class="chart-wrap chart-wrap-160"><canvas id="chart-sig"></canvas></div></div>
+
+        <div class="section-title">Trésorerie &amp; Bilan</div>
+        <div class="kpi-grid kpi-grid-4">
+          <div class="kpi-card"><div class="kpi-label">Solde bancaire</div><div class="kpi-value" id="kpi-solde-bancaire">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Créances clients</div><div class="kpi-value" id="kpi-creances">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Dettes fournisseurs</div><div class="kpi-value" id="kpi-dettes">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Impayés clients</div><div class="kpi-value" id="kpi-impayes">—</div></div>
+        </div>
+        <div class="kpi-grid kpi-grid-2">
+          <div class="kpi-card"><div class="kpi-label">DSO — Délai encaissement clients</div><div class="kpi-value" id="kpi-dso">—</div><div class="kpi-sub" id="kpi-dso-sub">Créances × 360 / Ventes TTC</div></div>
+          <div class="kpi-card"><div class="kpi-label">DPO — Délai règlement fournisseurs</div><div class="kpi-value" id="kpi-dpo">—</div><div class="kpi-sub">Dettes × 360 / Achats TTC</div></div>
+        </div>
+
+        <div class="section-title">Volumétrie</div>
+        <div class="kpi-grid kpi-grid-3">
+          <div class="kpi-card"><div class="kpi-label">Factures clients</div><div class="kpi-value" id="kpi-fact-clients">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Factures fournisseurs</div><div class="kpi-value" id="kpi-fact-fourn">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Masse salariale</div><div class="kpi-value" id="kpi-masse-sal">—</div></div>
+        </div>
+        <div class="chart-card"><div class="chart-title">Écritures par journal — N vs N-1</div><div class="chart-wrap chart-wrap-200"><canvas id="chart-journaux"></canvas></div></div>
+
+        <div class="section-title">Production comptable</div>
+        <div class="kpi-grid kpi-grid-2" style="margin-bottom:40px">
+          <div class="kpi-card"><div class="kpi-label">Dernier mois saisi</div><div class="kpi-value" id="kpi-dernier-mois">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Retard de saisie</div><div class="kpi-value" id="kpi-retard">—</div><div id="kpi-retard-badge" class="kpi-badge">—</div></div>
         </div>
       </div>
 
-      <!-- Vue Portefeuille -->
+      <!-- ══ Vue Portefeuille ══ -->
       <div class="view" id="view-portefeuille">
         <div class="page-header">
           <h1>Portefeuille clients</h1>
-          <p>Vue d'ensemble du portefeuille du cabinet</p>
+          <p id="pf-subtitle">— dossiers · Exercice 2025</p>
         </div>
-        <div class="placeholder-card">
-          <div class="placeholder-icon">
-            <svg viewBox="0 0 24 24" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+
+        <!-- Bloc 1 : Agrégats -->
+        <div class="kpi-grid kpi-grid-4">
+          <div class="kpi-card"><div class="kpi-label">Dossiers dans le périmètre</div><div class="kpi-value" id="pf-nb">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Découverts bancaires</div><div class="kpi-value" id="pf-decouvert">—</div><div class="kpi-sub" id="pf-decouvert-sub">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Honoraires impayés</div><div class="kpi-value" id="pf-hon">—</div><div class="kpi-sub" id="pf-hon-sub">—</div></div>
+          <div class="kpi-card"><div class="kpi-label">Retard moyen de saisie</div><div class="kpi-value" id="pf-retard-moy">—</div><div class="kpi-sub">Mois · moyenne du périmètre</div></div>
+        </div>
+
+        <!-- Bloc 2 : Filtres -->
+        <div class="section-title">Filtres</div>
+        <div class="filter-bar">
+          <div class="filter-group">
+            <label class="filter-label">Régime fiscal</label>
+            <select id="pf-f-regime" class="filter-select">
+              <option value="Tous">Tous</option>
+              <option value="IS">IS</option>
+              <option value="IR">IR</option>
+              <option value="BNC">BNC</option>
+              <option value="BIC">BIC</option>
+              <option value="BA">BA</option>
+            </select>
           </div>
-          <h2>Vue Portefeuille</h2>
-          <p>Le contenu de cette vue sera défini à la prochaine étape.</p>
+          <div class="filter-group">
+            <label class="filter-label">Tranche de CA</label>
+            <select id="pf-f-tranche" class="filter-select">
+              <option value="Tous">Tous</option>
+              <option value="lt100">&lt; 100 k€</option>
+              <option value="100-500">100 – 500 k€</option>
+              <option value="500-1000">500 k€ – 1 M€</option>
+              <option value="gt1000">&gt; 1 M€</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Secteur</label>
+            <select id="pf-f-secteur" class="filter-select"><option value="Tous">Tous</option></select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Forme juridique</label>
+            <select id="pf-f-forme" class="filter-select">
+              <option value="Tous">Tous</option>
+              <option value="SARL">SARL</option>
+              <option value="SAS">SAS</option>
+              <option value="SCI">SCI</option>
+              <option value="EI">EI</option>
+              <option value="EURL">EURL</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Bloc 3 : Alertes -->
+        <div class="section-title">Alertes automatiques</div>
+        <div id="pf-alertes" style="margin-bottom:14px"></div>
+
+        <!-- Bloc 4 : Comparaison N/N-1 -->
+        <div class="section-title">Comparaison N / N-1 par dossier</div>
+        <div class="chart-card">
+          <div class="chart-card-top">
+            <div class="chart-title" id="pf-compare-title">CA du mois — N vs N-1</div>
+            <select id="pf-m-compare" class="filter-select filter-select-sm">
+              <option value="ca">CA du mois</option>
+              <option value="resultat">Résultat mensuel</option>
+              <option value="salaires">Masse salariale</option>
+            </select>
+          </div>
+          <div class="chart-wrap chart-wrap-220"><canvas id="chart-pf-compare"></canvas></div>
+        </div>
+
+        <!-- Bloc 5 : KPI absolu -->
+        <div class="section-title">KPI absolu par dossier</div>
+        <div class="chart-card">
+          <div class="chart-card-top">
+            <div class="chart-title" id="pf-kpi-title">Solde bancaire</div>
+            <select id="pf-m-kpi" class="filter-select filter-select-sm">
+              <option value="solde">Solde bancaire</option>
+              <option value="creances">Créances clients</option>
+              <option value="impayes">Impayés clients</option>
+              <option value="dso">DSO (jours)</option>
+              <option value="profitabilite">Profitabilité %</option>
+              <option value="dettes">Dettes fournisseurs</option>
+              <option value="retard">Retard saisie (mois)</option>
+            </select>
+          </div>
+          <div class="chart-wrap chart-wrap-220"><canvas id="chart-pf-kpi"></canvas></div>
+        </div>
+
+        <!-- Bloc 6 : Tableau -->
+        <div class="section-title">Tableau portefeuille</div>
+        <div class="table-card">
+          <table class="pf-table">
+            <thead>
+              <tr>
+                <th>Dossier</th><th>Forme</th><th>Secteur</th><th>CA N</th>
+                <th>Var. N-1</th><th>Solde banc.</th><th>Créances</th>
+                <th>DSO</th><th>Impayés</th><th>Profit.</th><th>Retard</th><th>Statut</th>
+              </tr>
+            </thead>
+            <tbody id="pf-tbody"></tbody>
+          </table>
         </div>
       </div>
 
@@ -298,20 +326,401 @@
   </div>
 
   <script>
+    Chart.defaults.plugins.tooltip.backgroundColor = '#1A1A1A';
+    Chart.defaults.plugins.tooltip.titleColor = '#ffffff';
+    Chart.defaults.plugins.tooltip.bodyColor = '#cccccc';
+    Chart.defaults.plugins.tooltip.borderColor = 'rgba(255,255,255,0.08)';
+    Chart.defaults.plugins.tooltip.borderWidth = 1;
+    Chart.defaults.plugins.tooltip.cornerRadius = 8;
+    Chart.defaults.plugins.tooltip.padding = 10;
+
+    const MOIS = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+
+    const DOSSIERS = {
+      'martin-plomberie': {
+        nom: 'SARL Martin Plomberie', secteur: 'BTP · Artisanat',
+        meta: { forme:'SARL', regime:'IS', secteurCourt:'BTP', hon:0, honMois:0 },
+        activite: {
+          caCumuleN: 387500, caMoisCourant: 42300, caMoisN1: 38100,
+          caMensuelN:  [38500,41200,39800,43100,40500,44200,42800,41500,40200,43800,42300,null],
+          caMensuelN1: [36200,38800,37500,41000,38200,42100,40500,39800,38700,41200,38100,37900],
+        },
+        rentabilite: {
+          seuilAnnuel:320000, seuilMensuel:26667, resultatNet:48200, resultatNetN1:41000, caTotalEstime:490000,
+          sig:{ production:445000, valeurAjoutee:218000, ebe:67500, resultatExploitation:52000 }
+        },
+        tresorerie: { soldeBancaire:28400, creancesClients:54200, dettesFournisseurs:31800, impayesClients:8500, ventesTTC:465000, achatsTTC:198000 },
+        volumetrie: { facturesClients:124, facturesFournisseurs:87, masseSalariale:89400, masseSalarialeN1:83000, journaux:{ achatsN:342,achatsN1:318,ventesN:487,ventesN1:451,banqueN:621,banqueN1:589 } },
+        production: { dernierMoisSaisi:'Avril 2025', moisRetard:0 }
+      },
+      'dupont-patrimoine': {
+        nom: 'SCI Dupont Patrimoine', secteur: 'Immobilier · SCI',
+        meta: { forme:'SCI', regime:'IR', secteurCourt:'Immobilier', hon:800, honMois:1 },
+        activite: {
+          caCumuleN: 40000, caMoisCourant: 8000, caMoisN1: 8000,
+          caMensuelN:  [8000,8000,8000,8000,8000,null,null,null,null,null,null,null],
+          caMensuelN1: [7500,7500,7500,7500,8000,8000,8000,8000,8000,8000,8000,8000],
+        },
+        rentabilite: {
+          seuilAnnuel:62000, seuilMensuel:5167, resultatNet:22400, resultatNetN1:19000, caTotalEstime:96000,
+          sig:{ production:96000, valeurAjoutee:71000, ebe:38000, resultatExploitation:28500 }
+        },
+        tresorerie: { soldeBancaire:12000, creancesClients:8000, dettesFournisseurs:4200, impayesClients:0, ventesTTC:96000, achatsTTC:28000 },
+        volumetrie: { facturesClients:12, facturesFournisseurs:18, masseSalariale:0, masseSalarialeN1:0, journaux:{ achatsN:68,achatsN1:62,ventesN:48,ventesN1:46,banqueN:142,banqueN1:138 } },
+        production: { dernierMoisSaisi:'Mars 2025', moisRetard:1 }
+      },
+      'le-gaulois': {
+        nom: 'SARL Le Gaulois', secteur: 'Restauration · CHR',
+        meta: { forme:'SARL', regime:'IS', secteurCourt:'Restauration', hon:2400, honMois:2 },
+        activite: {
+          caCumuleN: 653000, caMoisCourant: 71500, caMoisN1: 68200,
+          caMensuelN:  [52000,55000,68000,72000,74000,82000,78000,80000,71500,null,null,null],
+          caMensuelN1: [49000,52000,63000,69000,71000,79000,75000,77000,68200,70000,64000,58000],
+        },
+        rentabilite: {
+          seuilAnnuel:620000, seuilMensuel:51667, resultatNet:31200, resultatNetN1:27000, caTotalEstime:790000,
+          sig:{ production:790000, valeurAjoutee:285000, ebe:58000, resultatExploitation:38000 }
+        },
+        tresorerie: { soldeBancaire:-8200, creancesClients:2400, dettesFournisseurs:48700, impayesClients:0, ventesTTC:790000, achatsTTC:412000 },
+        volumetrie: { facturesClients:0, facturesFournisseurs:218, masseSalariale:164000, masseSalarialeN1:148000, journaux:{ achatsN:842,achatsN1:798,ventesN:1240,ventesN1:1180,banqueN:1820,banqueN1:1740 } },
+        production: { dernierMoisSaisi:'Avril 2025', moisRetard:0 }
+      },
+      'dr-renard': {
+        nom: 'Dr. Renard — Médecin', secteur: 'Profession libérale · Santé',
+        meta: { forme:'EI', regime:'BNC', secteurCourt:'Santé', hon:0, honMois:0 },
+        activite: {
+          caCumuleN: 142000, caMoisCourant: 27800, caMoisN1: 26400,
+          caMensuelN:  [25000,26000,27500,28000,27000,29000,28500,27000,28000,27800,null,null],
+          caMensuelN1: [23500,24500,26000,26500,25500,27500,27000,25500,26400,26000,25000,24000],
+        },
+        rentabilite: {
+          seuilAnnuel:180000, seuilMensuel:15000, resultatNet:108500, resultatNetN1:95000, caTotalEstime:312000,
+          sig:{ production:312000, valeurAjoutee:290000, ebe:128000, resultatExploitation:112000 }
+        },
+        tresorerie: { soldeBancaire:74200, creancesClients:18400, dettesFournisseurs:3200, impayesClients:1200, ventesTTC:312000, achatsTTC:28000 },
+        volumetrie: { facturesClients:0, facturesFournisseurs:42, masseSalariale:38400, masseSalarialeN1:34000, journaux:{ achatsN:124,achatsN1:118,ventesN:0,ventesN1:0,banqueN:298,banqueN1:280 } },
+        production: { dernierMoisSaisi:'Avril 2025', moisRetard:0 }
+      },
+      'techpulse': {
+        nom: 'EURL TechPulse', secteur: 'Tech · Conseil & Édition logicielle',
+        meta: { forme:'EURL', regime:'IS', secteurCourt:'Tech', hon:3600, honMois:3 },
+        activite: {
+          caCumuleN: 984000, caMoisCourant: 142000, caMoisN1: 94000,
+          caMensuelN:  [78000,82000,95000,98000,115000,124000,118000,132000,142000,null,null,null],
+          caMensuelN1: [52000,55000,68000,72000,80000,85000,88000,90000,94000,98000,102000,110000],
+        },
+        rentabilite: {
+          seuilAnnuel:920000, seuilMensuel:76667, resultatNet:142000, resultatNetN1:72000, caTotalEstime:1420000,
+          sig:{ production:1420000, valeurAjoutee:980000, ebe:218000, resultatExploitation:175000 }
+        },
+        tresorerie: { soldeBancaire:18700, creancesClients:284000, dettesFournisseurs:42000, impayesClients:48000, ventesTTC:1420000, achatsTTC:385000 },
+        volumetrie: { facturesClients:87, facturesFournisseurs:124, masseSalariale:387000, masseSalarialeN1:252000, journaux:{ achatsN:487,achatsN1:342,ventesN:348,ventesN1:248,banqueN:892,banqueN1:642 } },
+        production: { dernierMoisSaisi:'Février 2025', moisRetard:2 }
+      },
+    };
+
+    /* ── Helpers ── */
+    const fmt = n => new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n);
+    const fmtNum = n => new Intl.NumberFormat('fr-FR').format(n);
+    const fmtCompact = v => new Intl.NumberFormat('fr-FR',{notation:'compact',maximumFractionDigits:0}).format(v)+' €';
+    const sign = x => (parseFloat(x)>=0?'+':'')+x+'%';
+
+    function getDso(d) {
+      const t = d.tresorerie;
+      return t.ventesTTC > 0 ? Math.round(t.creancesClients * 360 / t.ventesTTC) : 0;
+    }
+    function getProfitPct(d) {
+      return d.rentabilite.caTotalEstime > 0 ? d.rentabilite.resultatNet / d.rentabilite.caTotalEstime * 100 : 0;
+    }
+    function shortName(id) {
+      return DOSSIERS[id].nom.replace(/^(SARL|SCI|EURL|SAS|EI)\s/,'');
+    }
+
+    /* ── Dossier view charts ── */
+    let charts = {};
+    function destroyCharts() { Object.values(charts).forEach(c=>c&&c.destroy()); charts={}; }
+
+    function renderDossier(id) {
+      destroyCharts();
+      const d = DOSSIERS[id]; if (!d) return;
+      document.getElementById('dossier-nom').textContent = d.nom;
+      document.getElementById('dossier-secteur').textContent = d.secteur;
+
+      const a = d.activite;
+      document.getElementById('kpi-ca-cumule').textContent = fmt(a.caCumuleN);
+      document.getElementById('kpi-ca-cumule-sub').textContent = 'CA estimé N : '+fmt(d.rentabilite.caTotalEstime);
+      document.getElementById('kpi-ca-mois').textContent = fmt(a.caMoisCourant);
+      document.getElementById('kpi-ca-n1').textContent = fmt(a.caMoisN1);
+      const varEl = document.getElementById('kpi-variation');
+      if (a.caMoisN1===0){varEl.textContent='n/a';varEl.className='kpi-value';}
+      else {
+        const v=(a.caMoisCourant-a.caMoisN1)/a.caMoisN1*100;
+        varEl.textContent=(v>=0?'▲ ':'▼ ')+Math.abs(v).toFixed(1)+' %';
+        varEl.className='kpi-value '+(v>=0?'color-green':'color-red');
+      }
+      const ctxCa = document.getElementById('chart-ca');
+      const gradN = ctxCa.getContext('2d').createLinearGradient(0,0,0,200);
+      gradN.addColorStop(0,'rgba(29,158,117,0.18)'); gradN.addColorStop(1,'rgba(29,158,117,0)');
+      const gradN1 = ctxCa.getContext('2d').createLinearGradient(0,0,0,200);
+      gradN1.addColorStop(0,'rgba(180,178,169,0.10)'); gradN1.addColorStop(1,'rgba(180,178,169,0)');
+      charts.ca = new Chart(ctxCa,{type:'line',data:{labels:MOIS,datasets:[
+        {label:'N',data:a.caMensuelN,spanGaps:false,borderColor:'#1D9E75',backgroundColor:gradN,tension:0.35,fill:true,pointRadius:3,pointBackgroundColor:'#1D9E75'},
+        {label:'N-1',data:a.caMensuelN1,borderColor:'#B4B2A9',backgroundColor:gradN1,tension:0.35,fill:true,borderDash:[5,4],pointRadius:3,pointBackgroundColor:'#B4B2A9'}
+      ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:12},boxWidth:12,padding:16}}},scales:{x:{grid:{display:false},ticks:{font:{size:11}}},y:{grid:{color:'#F0F0EE'},ticks:{font:{size:11},callback:fmtCompact}}}}});
+
+      const r=d.rentabilite;
+      const seuilAtteint=a.caCumuleN>=r.seuilAnnuel;
+      const profPct=(r.resultatNet/r.caTotalEstime*100).toFixed(1);
+      document.getElementById('kpi-seuil-annuel').textContent=fmt(r.seuilAnnuel);
+      const bs=document.getElementById('kpi-seuil-badge');
+      bs.textContent=seuilAtteint?'✓ Atteint':'✗ Non atteint';
+      bs.className='kpi-badge '+(seuilAtteint?'badge-green':'badge-red');
+      document.getElementById('kpi-seuil-mensuel').textContent=fmt(r.seuilMensuel);
+      const profEl=document.getElementById('kpi-profitabilite');
+      profEl.textContent=profPct+' %';
+      const pp=parseFloat(profPct);
+      profEl.className='kpi-value '+(pp>=15?'color-green':pp>=8?'color-orange':'color-red');
+      const ctxSig = document.getElementById('chart-sig').getContext('2d');
+      const gradSig = ctxSig.createLinearGradient(0,0,400,0);
+      gradSig.addColorStop(0,'#1D9E75'); gradSig.addColorStop(1,'#5DCAA5');
+      charts.sig=new Chart(document.getElementById('chart-sig'),{type:'bar',data:{labels:['Production','Valeur ajoutée','EBE','Résultat expl.'],datasets:[{data:[r.sig.production,r.sig.valeurAjoutee,r.sig.ebe,r.sig.resultatExploitation],backgroundColor:gradSig,borderWidth:0,borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#F0F0EE'},ticks:{font:{size:11},callback:fmtCompact}},y:{grid:{display:false},ticks:{font:{size:12}}}}}});
+
+      const t=d.tresorerie;
+      const soldeEl=document.getElementById('kpi-solde-bancaire');
+      soldeEl.textContent=fmt(t.soldeBancaire);
+      soldeEl.className='kpi-value '+(t.soldeBancaire<0?'color-red':'');
+      document.getElementById('kpi-creances').textContent=fmt(t.creancesClients);
+      document.getElementById('kpi-dettes').textContent=fmt(t.dettesFournisseurs);
+      const impEl=document.getElementById('kpi-impayes');
+      impEl.textContent=fmt(t.impayesClients);
+      impEl.className='kpi-value '+(t.impayesClients>0?'color-orange':'');
+      const dso=getDso(d), dpo=t.achatsTTC>0?Math.round(t.dettesFournisseurs*360/t.achatsTTC):0;
+      const dsoEl=document.getElementById('kpi-dso');
+      dsoEl.textContent=dso+' j';
+      dsoEl.className='kpi-value '+(dso>60?'color-red':dso>45?'color-orange':'');
+      const dsoSub=document.getElementById('kpi-dso-sub');
+      if(dso>60){dsoSub.textContent='⚠ Alerte : délai supérieur à 60 jours';dsoSub.className='kpi-sub color-red';}
+      else{dsoSub.textContent='Délai dans la norme';dsoSub.className='kpi-sub';}
+      document.getElementById('kpi-dpo').textContent=dpo+' j';
+
+      const vol=d.volumetrie;
+      document.getElementById('kpi-fact-clients').textContent=fmtNum(vol.facturesClients);
+      document.getElementById('kpi-fact-fourn').textContent=fmtNum(vol.facturesFournisseurs);
+      document.getElementById('kpi-masse-sal').textContent=fmt(vol.masseSalariale);
+      const j=vol.journaux;
+      const vA=j.achatsN1?((j.achatsN-j.achatsN1)/j.achatsN1*100).toFixed(1):'0.0';
+      const vV=j.ventesN1?((j.ventesN-j.ventesN1)/j.ventesN1*100).toFixed(1):'0.0';
+      const vB=j.banqueN1?((j.banqueN-j.banqueN1)/j.banqueN1*100).toFixed(1):'0.0';
+      charts.journaux=new Chart(document.getElementById('chart-journaux'),{type:'bar',data:{labels:['Achats '+sign(vA),'Ventes '+sign(vV),'Banque '+sign(vB)],datasets:[{label:'N',data:[j.achatsN,j.ventesN,j.banqueN],backgroundColor:'#1D9E75',borderRadius:4},{label:'N-1',data:[j.achatsN1,j.ventesN1,j.banqueN1],backgroundColor:'#D1D0CB',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:12},boxWidth:12,padding:16}}},scales:{x:{grid:{display:false},ticks:{font:{size:12}}},y:{grid:{color:'#F0F0EE'},ticks:{font:{size:11}},beginAtZero:true}}}});
+
+      const prod=d.production;
+      document.getElementById('kpi-dernier-mois').textContent=prod.dernierMoisSaisi;
+      const retardEl=document.getElementById('kpi-retard'), retardBadge=document.getElementById('kpi-retard-badge');
+      if(prod.moisRetard===0){retardEl.textContent='À jour';retardEl.className='kpi-value color-green';retardBadge.textContent='✓ Aucun retard';retardBadge.className='kpi-badge badge-green';}
+      else if(prod.moisRetard===1){retardEl.textContent='1 mois';retardEl.className='kpi-value color-orange';retardBadge.textContent='⚠ Attention';retardBadge.className='kpi-badge badge-orange';}
+      else{retardEl.textContent=prod.moisRetard+' mois';retardEl.className='kpi-value color-red';retardBadge.textContent='✗ Retard critique';retardBadge.className='kpi-badge badge-red';}
+    }
+
+    /* ── Portefeuille ── */
+    let pfCharts = {};
+
+    function getAlertes(id) {
+      const d = DOSSIERS[id], t = d.tresorerie, prod = d.production, dso = getDso(d);
+      const al = [];
+      if (t.soldeBancaire < 0) al.push({type:'red', label:'Découvert '+fmt(t.soldeBancaire)});
+      if (d.meta.hon > 0) al.push({type: d.meta.honMois>=2?'red':'orange', label:'Honoraires impayés : '+d.meta.honMois+' mois ('+fmt(d.meta.hon)+')'});
+      if (prod.moisRetard===1) al.push({type:'orange', label:'Retard de saisie : 1 mois'});
+      else if (prod.moisRetard>=2) al.push({type:'red', label:'Retard de saisie : '+prod.moisRetard+' mois'});
+      if (dso>60) al.push({type:'orange', label:'DSO : '+dso+' j (> 60 j)'});
+      if (t.impayesClients>15000) al.push({type:'red', label:'Impayés clients : '+fmt(t.impayesClients)});
+      return al;
+    }
+
+    function getStatut(alertes) {
+      if (!alertes.length) return 'Sain';
+      if (alertes.some(a=>a.type==='red')) return 'Critique';
+      return 'Attention';
+    }
+
+    function inTranche(d, v) {
+      const ca = d.rentabilite.caTotalEstime;
+      if (v==='lt100') return ca<100000;
+      if (v==='100-500') return ca>=100000&&ca<500000;
+      if (v==='500-1000') return ca>=500000&&ca<1000000;
+      if (v==='gt1000') return ca>=1000000;
+      return true;
+    }
+
+    function filteredKeys() {
+      const regime = document.getElementById('pf-f-regime').value;
+      const tranche = document.getElementById('pf-f-tranche').value;
+      const secteur = document.getElementById('pf-f-secteur').value;
+      const forme = document.getElementById('pf-f-forme').value;
+      return Object.keys(DOSSIERS).filter(id => {
+        const d = DOSSIERS[id];
+        if (regime!=='Tous' && d.meta.regime!==regime) return false;
+        if (tranche!=='Tous' && !inTranche(d,tranche)) return false;
+        if (secteur!=='Tous' && d.meta.secteurCourt!==secteur) return false;
+        if (forme!=='Tous' && d.meta.forme!==forme) return false;
+        return true;
+      });
+    }
+
+    function renderPfAggregats(keys) {
+      document.getElementById('pf-nb').textContent = keys.length;
+      document.getElementById('pf-subtitle').textContent = keys.length+' dossier'+(keys.length>1?'s':'')+' · Exercice 2025';
+
+      const discovers = keys.filter(id=>DOSSIERS[id].tresorerie.soldeBancaire<0);
+      const decEl = document.getElementById('pf-decouvert');
+      decEl.textContent = discovers.length;
+      decEl.className = 'kpi-value '+(discovers.length>0?'color-red':'');
+      document.getElementById('pf-decouvert-sub').textContent = discovers.length>0 ? discovers.map(id=>shortName(id)).join(', ') : 'Aucun découvert';
+
+      const withHon = keys.filter(id=>DOSSIERS[id].meta.hon>0);
+      const totalHon = withHon.reduce((s,id)=>s+DOSSIERS[id].meta.hon,0);
+      const honEl = document.getElementById('pf-hon');
+      honEl.textContent = totalHon>0 ? fmt(totalHon) : '—';
+      honEl.className = 'kpi-value '+(totalHon>0?'color-orange':'');
+      document.getElementById('pf-hon-sub').textContent = withHon.length>0 ? withHon.length+' dossier'+(withHon.length>1?'s':'')+' concerné'+(withHon.length>1?'s':'') : 'Aucun impayé';
+
+      const avg = keys.length>0 ? (keys.reduce((s,id)=>s+DOSSIERS[id].production.moisRetard,0)/keys.length).toFixed(1) : '0';
+      const retEl = document.getElementById('pf-retard-moy');
+      retEl.textContent = avg+' mois';
+      retEl.className = 'kpi-value '+(parseFloat(avg)===0?'color-green':parseFloat(avg)<1?'color-orange':'color-red');
+    }
+
+    function renderPfAlertes(keys) {
+      const container = document.getElementById('pf-alertes');
+      const withAl = keys.filter(id=>getAlertes(id).length>0);
+      if (!withAl.length) {
+        container.innerHTML = '<div class="alert-empty"><span style="color:var(--green);font-size:18px;font-weight:700">✓</span> Aucune alerte sur ce périmètre</div>';
+        return;
+      }
+      container.innerHTML = withAl.map(id => {
+        const badges = getAlertes(id).map(a=>`<span class="alert-badge alert-badge-${a.type}">${a.label}</span>`).join('');
+        return `<div class="alert-row"><div class="alert-dossier">${DOSSIERS[id].nom}</div><div class="alert-badges">${badges}</div></div>`;
+      }).join('');
+    }
+
+    function renderPfCompare(keys) {
+      if (pfCharts.compare) { pfCharts.compare.destroy(); pfCharts.compare=null; }
+      const metric = document.getElementById('pf-m-compare').value;
+      const labels = keys.map(id=>shortName(id));
+      const titles = {ca:'CA du mois — N vs N-1', resultat:'Résultat mensuel — N vs N-1', salaires:'Masse salariale — N vs N-1'};
+      document.getElementById('pf-compare-title').textContent = titles[metric];
+      let dataN, dataN1;
+      if (metric==='ca') { dataN=keys.map(id=>DOSSIERS[id].activite.caMoisCourant); dataN1=keys.map(id=>DOSSIERS[id].activite.caMoisN1); }
+      else if (metric==='resultat') { dataN=keys.map(id=>Math.round(DOSSIERS[id].rentabilite.resultatNet/12)); dataN1=keys.map(id=>Math.round(DOSSIERS[id].rentabilite.resultatNetN1/12)); }
+      else { dataN=keys.map(id=>DOSSIERS[id].volumetrie.masseSalariale); dataN1=keys.map(id=>DOSSIERS[id].volumetrie.masseSalarialeN1); }
+      pfCharts.compare = new Chart(document.getElementById('chart-pf-compare'),{type:'bar',data:{labels,datasets:[{label:'N',data:dataN,backgroundColor:'#1D9E75',borderRadius:4},{label:'N-1',data:dataN1,backgroundColor:'#D1D0CB',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:12},boxWidth:12,padding:16}}},scales:{x:{grid:{display:false},ticks:{font:{size:11}}},y:{grid:{color:'#F0F0EE'},ticks:{font:{size:11},callback:fmtCompact}}}}});
+    }
+
+    function renderPfKpi(keys) {
+      if (pfCharts.kpi) { pfCharts.kpi.destroy(); pfCharts.kpi=null; }
+      const metric = document.getElementById('pf-m-kpi').value;
+      const labels = keys.map(id=>shortName(id));
+      const kpiLabels = {solde:'Solde bancaire',creances:'Créances clients',impayes:'Impayés clients',dso:'DSO (jours)',profitabilite:'Profitabilité %',dettes:'Dettes fournisseurs',retard:'Retard saisie (mois)'};
+      document.getElementById('pf-kpi-title').textContent = kpiLabels[metric];
+      let data, colors;
+      if (metric==='solde') { data=keys.map(id=>DOSSIERS[id].tresorerie.soldeBancaire); colors=data.map(v=>v<0?'rgba(226,75,74,0.8)':'rgba(29,158,117,0.72)'); }
+      else if (metric==='creances') { data=keys.map(id=>DOSSIERS[id].tresorerie.creancesClients); colors=data.map(()=>'rgba(29,158,117,0.55)'); }
+      else if (metric==='impayes') { data=keys.map(id=>DOSSIERS[id].tresorerie.impayesClients); colors=data.map(v=>v===0?'rgba(29,158,117,0.72)':v>15000?'rgba(226,75,74,0.8)':'rgba(245,158,11,0.7)'); }
+      else if (metric==='dso') { data=keys.map(id=>getDso(DOSSIERS[id])); colors=data.map(v=>v>60?'rgba(226,75,74,0.8)':v>45?'rgba(245,158,11,0.7)':'rgba(29,158,117,0.72)'); }
+      else if (metric==='profitabilite') { data=keys.map(id=>parseFloat(getProfitPct(DOSSIERS[id]).toFixed(1))); colors=data.map(v=>v>=12?'rgba(29,158,117,0.72)':v>=5?'rgba(245,158,11,0.7)':'rgba(226,75,74,0.8)'); }
+      else if (metric==='dettes') { data=keys.map(id=>DOSSIERS[id].tresorerie.dettesFournisseurs); colors=data.map(()=>'rgba(148,163,184,0.65)'); }
+      else { data=keys.map(id=>DOSSIERS[id].production.moisRetard); colors=data.map(v=>v===0?'rgba(29,158,117,0.72)':v===1?'rgba(245,158,11,0.7)':'rgba(226,75,74,0.8)'); }
+      const isCurrency=['solde','creances','impayes','dettes'].includes(metric);
+      const isPercent=metric==='profitabilite', isDays=metric==='dso';
+      pfCharts.kpi = new Chart(document.getElementById('chart-pf-kpi'),{type:'bar',data:{labels,datasets:[{label:kpiLabels[metric],data,backgroundColor:colors,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{font:{size:11}}},y:{grid:{color:'#F0F0EE'},ticks:{font:{size:11},callback:v=>isCurrency?fmtCompact(v):isPercent?v+'%':isDays?v+' j':v}}}}});
+    }
+
+    function renderPfTable(keys) {
+      const tbody = document.getElementById('pf-tbody');
+      if (!keys.length) { tbody.innerHTML='<tr><td colspan="12" style="text-align:center;padding:32px;color:var(--text-muted)">Aucun dossier dans ce périmètre</td></tr>'; return; }
+      tbody.innerHTML = keys.map(id => {
+        const d=DOSSIERS[id], t=d.tresorerie, r=d.rentabilite, a=d.activite, prod=d.production;
+        const dso=getDso(d);
+        const prof=getProfitPct(d).toFixed(1);
+        const varCA=a.caMoisN1>0?((a.caMoisCourant-a.caMoisN1)/a.caMoisN1*100).toFixed(1):'0.0';
+        const alertes=getAlertes(id);
+        const statut=getStatut(alertes);
+        const sc=statut==='Sain'?'statut-sain':statut==='Attention'?'statut-attention':'statut-critique';
+        const varCls=parseFloat(varCA)>=0?'color-green':'color-red';
+        const profCls=parseFloat(prof)>=12?'color-green':parseFloat(prof)>=5?'color-orange':'color-red';
+        const soldeCls=t.soldeBancaire<0?'color-red':'';
+        const dsoCls=dso>60?'color-red':dso>45?'color-orange':'';
+        const impCls=t.impayesClients>15000?'color-red':t.impayesClients>0?'color-orange':'';
+        const retardCls=prod.moisRetard===0?'color-green':prod.moisRetard===1?'color-orange':'color-red';
+        return `<tr>
+          <td style="font-weight:600">${d.nom}</td>
+          <td><span class="tag">${d.meta.forme}</span></td>
+          <td style="color:var(--text-muted)">${d.meta.secteurCourt}</td>
+          <td>${fmt(r.caTotalEstime)}</td>
+          <td class="${varCls}" style="font-weight:600">${parseFloat(varCA)>=0?'▲':'▼'} ${Math.abs(varCA)}%</td>
+          <td class="${soldeCls}">${fmt(t.soldeBancaire)}</td>
+          <td>${fmt(t.creancesClients)}</td>
+          <td class="${dsoCls}">${dso} j</td>
+          <td class="${impCls}">${t.impayesClients>0?fmt(t.impayesClients):'—'}</td>
+          <td class="${profCls}" style="font-weight:600">${prof} %</td>
+          <td class="${retardCls}">${prod.moisRetard===0?'À jour':prod.moisRetard+' mois'}</td>
+          <td><span class="statut-badge ${sc}">${statut}</span></td>
+        </tr>`;
+      }).join('');
+    }
+
+    function renderPortefeuille() {
+      const keys = filteredKeys();
+      renderPfAggregats(keys);
+      renderPfAlertes(keys);
+      renderPfCompare(keys);
+      renderPfKpi(keys);
+      renderPfTable(keys);
+    }
+
+    function triggerAnims(viewId) {
+      const cards = document.querySelectorAll('#'+viewId+' .kpi-card, #'+viewId+' .chart-card');
+      cards.forEach(c => { c.classList.add('anim-card'); c.classList.remove('visible'); });
+      requestAnimationFrame(() => {
+        cards.forEach((c,i) => {
+          c.style.animationDelay = (Math.min(i,3)*0.05)+'s';
+          c.classList.add('visible');
+        });
+      });
+    }
+
+    /* ── Navigation ── */
     const navItems = document.querySelectorAll('.nav-item[data-view]');
     const views = document.querySelectorAll('.view');
-
     navItems.forEach(item => {
       item.addEventListener('click', () => {
         const target = item.dataset.view;
-
-        navItems.forEach(n => n.classList.remove('active'));
-        views.forEach(v => v.classList.remove('active'));
-
+        navItems.forEach(n=>n.classList.remove('active'));
+        views.forEach(v=>v.classList.remove('active'));
         item.classList.add('active');
-        document.getElementById('view-' + target).classList.add('active');
+        document.getElementById('view-'+target).classList.add('active');
+        if (target==='portefeuille') renderPortefeuille();
+        triggerAnims('view-'+target);
       });
     });
+
+    /* ── Listeners portefeuille ── */
+    ['pf-f-regime','pf-f-tranche','pf-f-secteur','pf-f-forme'].forEach(id => {
+      document.getElementById(id).addEventListener('change', renderPortefeuille);
+    });
+    document.getElementById('pf-m-compare').addEventListener('change', () => renderPfCompare(filteredKeys()));
+    document.getElementById('pf-m-kpi').addEventListener('change', () => renderPfKpi(filteredKeys()));
+
+    /* ── Init ── */
+    (function initSecteurFilter() {
+      const sel = document.getElementById('pf-f-secteur');
+      [...new Set(Object.values(DOSSIERS).map(d=>d.meta.secteurCourt))].sort().forEach(s => {
+        const o = document.createElement('option'); o.value=s; o.textContent=s; sel.appendChild(o);
+      });
+    })();
+
+    document.getElementById('dossier-select').addEventListener('change', e => { renderDossier(e.target.value); triggerAnims('view-dossier'); });
+    renderDossier('martin-plomberie');
+    triggerAnims('view-dossier');
   </script>
 
 </body>
